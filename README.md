@@ -1,4 +1,4 @@
-In this summer project, we built a novel deterministic CUR decomposition algorithm (Subspace)and compared it against a slightly modified version of the current non-deterministic method for performing the docomposition.
+In this summer project, we built a novel deterministic CUR decomposition algorithm (Subspace)and compared it against a slightly modified version of an existing non-deterministic method for performing the docomposition.
 
 To test our decomposition, Subspace, on a dataset run:
 ```
