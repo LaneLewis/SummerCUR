@@ -36,7 +36,7 @@ def plot_across_singular_vec(ylabel:str, title:str, subspace_data:np.array, leve
     plt.ylabel(ylabel)
     plt.legend()
     plt.title(title)
-    plt.savefig(save_path)
+    plt.savefig(save_path,bbox_inches="tight")
     plt.close()
 
 def plot_curs_dist(df: pd.DataFrame, max_singular_vector_num:int, constant_search_size:int, leverage_sample_size:int, save_path:str, data_name="Dataset"):
@@ -67,21 +67,21 @@ def plot_curs_dist(df: pd.DataFrame, max_singular_vector_num:int, constant_searc
         leverage_col_dist_sd.append(leverage_col_s)
         leverage_row_dist_sd.append(leverage_row_s)
     plot_across_singular_vec("Frobenius Error of Data and CUR Approximation",
-        f"CUR Frobenius Norm of Subspace and Leverage Algorithms \non {data_name} vs Number of Features Selected",
+        f"Fixed Search Size Comparison: \n CUR Frobenius Norm of Subspace and Leverage Algorithms \non {data_name} vs Number of Features Selected",
         subspace_cur_dist,
         leverage_cur_dist,
         leverage_cur_dist_sd,
         max_singular_vector_num,
         save_path + f"{data_name}_CUR.png")
     plot_across_singular_vec("Projection Frobenius Error",
-        f"Projection Distance of Subspace and Leverage Algorithms \non {data_name}'s Columns vs Number of Features Selected",
+        f"Fixed Search Size Comparison: \n Projection Distance of Subspace and Leverage Algorithms \non {data_name}'s Columns vs Number of Features Selected",
         subspace_col_dist,
         leverage_col_dist,
         leverage_col_dist_sd,
         max_singular_vector_num,
         save_path + f"{data_name}_Col.png")
     plot_across_singular_vec("Projection Frobenius Error",
-        f"Projection Distance of Subspace and Leverage Algorithms \non {data_name}'s Rows vs Number of Features Selected",
+        f"Fixed Search Size Comparison: \n Projection Distance of Subspace and Leverage Algorithms \non {data_name}'s Rows vs Number of Features Selected",
         subspace_row_dist,
         leverage_row_dist,
         leverage_row_dist_sd,
@@ -128,3 +128,57 @@ def plot_curs_time(df:pd.DataFrame, max_singular_vect_num:int, constant_search_s
     plt.title(f"Runtime of Subspace and Leverage Algorithm's CUR \non {data_name} vs Number of Features Selected")
     plt.savefig(save_path + f"{data_name}_Time.png")
     plt.close()
+
+def plot_cur_runtime(df:pd.DataFrame, max_singular_vect_num:int, constant_search_size:int, leverage_sample_size:int, iterations:int, save_path:str, data_name="Dataset"):
+    subspace_col_dist = []
+    leverage_col_dist = []
+    subspace_row_dist = []
+    leverage_row_dist = []
+    subspace_cur_dist = []
+    leverage_cur_dist = []
+    leverage_col_dist_sd = []
+    leverage_row_dist_sd = []
+    leverage_cur_dist_sd = []
+    for i in range(1, max_singular_vect_num+1):
+        print(i)
+        subspace_av_time,_ = avg_sd_time(subspace_cur,iterations, df, i, constant_search_size)
+        leverage_av_time = 0
+        hyper_search = 0
+        while leverage_av_time < subspace_av_time:
+            hyper_search += 1
+            leverage_av_time, _ = avg_sd_time(leverage_cur,iterations, df, i, hyper_search)
+        
+        _, _, _, dists = subspace_cur(df,i,constant_search_size)
+        subspace_col_dist.append(dists["col_dist"])
+        subspace_row_dist.append(dists["row_dist"])
+        subspace_cur_dist.append(dists["cur_dist"])
+        (leverage_row_a, leverage_row_s, leverage_col_a, 
+        leverage_col_s, leverage_cur_a, leverage_cur_s) = sample_from_leverage_cur(df, i, hyper_search, leverage_sample_size)
+        leverage_row_dist.append(leverage_row_a)
+        leverage_col_dist.append(leverage_col_a)
+        leverage_cur_dist.append(leverage_cur_a)
+        leverage_cur_dist_sd.append(leverage_cur_s)
+        leverage_col_dist_sd.append(leverage_col_s)
+        leverage_row_dist_sd.append(leverage_row_s)
+
+    plot_across_singular_vec("Frobenius Error of Data and CUR Approximation",
+        f"Runtime Comparison:\n CUR Frobenius Norm of Subspace and Leverage Algorithms \non {data_name} vs Number of Features Selected",
+        subspace_cur_dist,
+        leverage_cur_dist,
+        leverage_cur_dist_sd,
+        max_singular_vect_num,
+        save_path + f"{data_name}_Runtime_CUR.png")
+    plot_across_singular_vec("Projection Frobenius Error",
+        f"Runtime Comparison:\n Projection Distance of Subspace and Leverage Algorithms \non {data_name}'s Columns vs Number of Features Selected",
+        subspace_col_dist,
+        leverage_col_dist,
+        leverage_col_dist_sd,
+        max_singular_vect_num,
+        save_path + f"{data_name}_Runtime_Col.png")
+    plot_across_singular_vec("Projection Frobenius Error",
+        f"Runtime Comparison: \n Projection Distance of Subspace and Leverage Algorithms \non {data_name}'s Rows vs Number of Features Selected",
+        subspace_row_dist,
+        leverage_row_dist,
+        leverage_row_dist_sd,
+        max_singular_vect_num,
+        save_path + f"{data_name}_Runtime_Row.png")

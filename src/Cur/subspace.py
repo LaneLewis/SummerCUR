@@ -61,7 +61,10 @@ class Subspace(FeatureSelector):
         '''Performs the algorithm Subspace from the paper. Takes in 
         k, the total number of left singular vectors to use and c,
         the total number of index choices to minimize the Proj Distance over.
-        Returns the selected features and the distance away it is.'''
+        Returns the selected features and the distance away it is.
+        
+        A reasonable suggestion for k and c would be the total number of columns in your
+        dataframe divided by 4'''
         if k == 0:
             raise Exception("singular vector number must be postive int")
         if k > len(self.data.index):

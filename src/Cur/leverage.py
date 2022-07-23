@@ -6,6 +6,11 @@ class Leverage (FeatureSelector):
         k gives the number of singular vectors to use and c gives the 
         number of indicie sets to generate and minimize the Proj Distance 
         over. Returns the selected features and the distance away it is. 
+
+        IMPORTANT NOTE: unlike in the malhalony et all paper, the columns selected are not
+        rescaled. For the purposes of this paper, it was an unnecessary addition since the 
+        comparisons using this algorithm all have a projection of X onto C which is independant
+        of a resaling of the matrix C.
         '''
         if k == 0:
             raise Exception("singular vector number must be postive int")
