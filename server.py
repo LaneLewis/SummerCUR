@@ -24,6 +24,7 @@ def O_L2(dataset:pd.DataFrame):
     return max(norm) - np.average(norm)
 
 if __name__ == '__main__':
+    print("loading boston")
     boston = pd.DataFrame(datasets.load_boston(return_X_y=True)[0])
     boston = boston - boston.mean(axis=0)
     plot_curs_dist(boston, 13, 10, 15, "./Figs/boston/", data_name="Boston")
@@ -34,6 +35,7 @@ if __name__ == '__main__':
     print("finished runtime plot for boston")
     print(f"Boston O_L2: {O_L2(boston)}")
 
+    print("loading wine")
     wine = pd.DataFrame(datasets.load_wine(return_X_y=True)[0])
     wine = wine - wine.mean(axis=0)
     plot_curs_dist(wine, 13, 10, 15, "./Figs/wine/", data_name="Wine")
@@ -44,6 +46,7 @@ if __name__ == '__main__':
     print("finished runtime plot for wine")
     print(f"Wine O_L2: {O_L2(wine)}")
 
+    print("loading genetics")
     genetics = get_gene_data()
     genetics = genetics - genetics.mean(axis=0)
     plot_curs_dist(genetics, 13, 10, 15, "./Figs/genetics/", data_name="Genes")
