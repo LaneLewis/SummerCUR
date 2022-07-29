@@ -3,4 +3,4 @@ services:
   graph-build:
     image: ghcr.io/lanelewis/summercur:latest
     volumes:
-      - ~/Figs:/app/figs
+      - ./Figs:/urs/src/app/Figs
